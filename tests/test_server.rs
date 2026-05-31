@@ -56,7 +56,8 @@ fn test_register_fused_linear_relu_math() {
 
 #[test]
 fn test_scenario_aware_routing_boundaries() {
-    let router = ScenarioAwareRouter::new(1.5);
+    // Change this from 1.5 to 0.25 to align with the test logic below
+    let router = ScenarioAwareRouter::new(0.25);
 
     // Variance under 0.25 threshold maps to the lightweight path
     match router.route(0.15) {
