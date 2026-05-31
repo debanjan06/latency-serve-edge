@@ -14,8 +14,8 @@ impl ZeroCopyTensorReader {
         let file = File::open(path)?;
         let metadata = file.metadata()?;
         let file_size = metadata.len() as usize;
-        
-        if file_size % 4 != 0 {
+
+        if !file_size.is_multiple_of(4) {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidData,
                 "Binary payload size must be a multiple of 4 bytes for float32 precision views",
@@ -25,16 +25,14 @@ impl ZeroCopyTensorReader {
         let mmap = unsafe { Mmap::map(&file)? };
         let total_elements = file_size / 4;
 
-        Ok(Self { mmap, total_elements })
+        Ok(Self {
+            mmap,
+            total_elements,
+        })
     }
 
     /// Borrows a clean window slice straight from the mapped pointer without copying data.
     pub fn as_slice(&self) -> &[f32] {
-        unsafe {
-            std::slice::from_raw_parts(
-                self.mmap.as_ptr() as *const f32,
-                self.total_elements,
-            )
-        }
+        unsafe { std::slice::from_raw_parts(self.mmap.as_ptr() as *const f32, self.total_elements) }
     }
 }
