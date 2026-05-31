@@ -1,0 +1,42 @@
+name: Rust Continuous Integration
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build_and_test:
+    name: Build & Test Suite
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Rust Toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt
+
+    - name: Enable Cargo Cache
+      uses: Swatinem/rust-cache@v2
+
+    - name: Verify Code Formatting
+      run: cargo fmt --check
+
+    - name: Run Static Code Analysis (Clippy)
+      run: cargo clippy -- -D warnings
+
+    - name: Compile Workspace (Debug)
+      run: cargo check
+
+    - name: Run Integration Tests
+      run: cargo test --verbose
+
+    - name: Compile High-Performance Release
+      run: cargo build --release
