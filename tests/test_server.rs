@@ -39,7 +39,7 @@ fn test_register_fused_linear_relu_math() {
 
     let input = vec![1.0, 2.0];
     let weights = vec![
-        0.5, 2.0, // Row 0 weights
+        0.5, 2.0,  // Row 0 weights
         -1.0, 0.5, // Row 1 weights
     ];
     let bias = vec![0.1, -5.0];
